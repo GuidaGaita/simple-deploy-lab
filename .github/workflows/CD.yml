@@ -40,14 +40,7 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' # SÓ DEPLOYA NO PUSH DA MAIN
-    env:
-      RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.RENDER_DEPLOY_HOOK != '' # SÓ DEPLOYA NO PUSH DA MAIN
     steps:
       - name: Deploy to Render
-        run: |
-          if [ -z "$RENDER_DEPLOY_HOOK" ]; then
-            echo "RENDER_DEPLOY_HOOK secret is not set. Add it in repository settings: Settings > Secrets and variables > Actions."
-            exit 1
-          fi
-          curl -fsS "$RENDER_DEPLOY_HOOK"
+        run: curl -fsS "${{ secrets.RENDER_DEPLOY_HOOK }}"
